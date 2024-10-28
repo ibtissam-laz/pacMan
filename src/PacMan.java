@@ -4,24 +4,24 @@ import java.util.HashSet;
 import java.util.Random;
 import javax.swing.*;
 
-public class PacMan extends JPanel {
+public class PacMan extends JPanel implements ActionListener, KeyListener {
 
     class Block {
         int x;
         int y;
         int width;
-        int hight;
+        int height;
         Image image;
 
         int startX;
         int startY;
 
-        Block(Image image, int x, int y, int width, int hight) {
+        Block(Image image, int x, int y, int width, int height) {
             this.image = image;
             this.x = x;
             this.y = y;
             this.width = width;
-            this.hight = hight;
+            this.height = height;
             this.startX = x;
             this.startY = y;
         }
@@ -31,7 +31,7 @@ public class PacMan extends JPanel {
     private int columnCount = 19;
     private int tileSize = 32;
     private int boardWidth = columnCount * tileSize;
-    private int boardHight = rowCount * tileSize;
+    private int boardHeight = rowCount * tileSize;
 
     private Image wallImage;
     private Image blueGhostImage;
@@ -75,8 +75,10 @@ public class PacMan extends JPanel {
     HashSet<Block> ghosts;
     Block pacman;
 
+    Timer gameLoop;
+
     PacMan() {
-        setPreferredSize(new Dimension(boardWidth, boardHight));
+        setPreferredSize(new Dimension(boardWidth, boardHeight));
         setBackground(Color.BLACK);
 
         // Load images
@@ -90,6 +92,10 @@ public class PacMan extends JPanel {
         pacmanDownImage = new ImageIcon(getClass().getResource("./pacmanDown.png")).getImage();
         pacmanLeftImage = new ImageIcon(getClass().getResource("./pacmanLeft.png")).getImage();
         pacmanRightImage = new ImageIcon(getClass().getResource("./pacmanRight.png")).getImage();
+
+        loadMap();
+        gameLoop = new Timer(50, this);
+        gameLoop.start();
 
     }
 
@@ -129,5 +135,44 @@ public class PacMan extends JPanel {
                 }
             }
         }
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        draw(g);
+    }
+
+    public void draw(Graphics g) {
+        g.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height, null);
+
+        for (Block ghost : ghosts) {
+            g.drawImage(ghost.image, ghost.x, ghost.y, ghost.width, ghost.height, null);
+        }
+        for (Block wall : walls) {
+            g.drawImage(wall.image, wall.x, wall.y, wall.width, wall.height, null);
+        }
+        g.setColor(Color.WHITE);
+        for (Block food : foods) {
+            g.fillRect(food.x, food.y, food.width, food.height);
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        repaint();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'keyReleased'");
     }
 }
